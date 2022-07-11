@@ -32,16 +32,18 @@ function min(min_val: number) {
         // 没有对应的值时，不需要校验，直接返回 true
         if (val === undefined || val == null) return {success: true, msg: ""};
         const isString = typeof val === "string";
-        const txt = isString ? "长度" : "值"
+        let txt: string;
         let is_valid: boolean;
         if (isString) {
+            txt = `${val}的长度`
             is_valid = (val as string).length >= min_val;
         } else {
+            txt = `值${val}`
             is_valid = val >= min_val;
         }
         return {
             success: is_valid,
-            msg: is_valid ? "" : `${txt}${val}必须不小于${min_val}`
+            msg: is_valid ? "" : `${txt}必须不小于${min_val}`
         }
     }
 
@@ -62,14 +64,16 @@ function max(max_val: number) {
         // 没有对应的值时，不需要校验，直接返回 true
         if (val === undefined || val == null) return {success: true, msg: ""};
         const isString = typeof val === "string";
-        const txt = isString ? "长度" : "值"
+        let txt: string;
         let is_valid: boolean;
         if (isString) {
+            txt = `${val}的长度`
             is_valid = (val as string).length <= max_val;
         } else {
+            txt = `值${val}`
             is_valid = val <= max_val;
         }
-        return {success: is_valid, msg: is_valid ? "" : `${txt}${val}必须不大于${max_val})`}
+        return {success: is_valid, msg: is_valid ? "" : `${txt}必须不大于${max_val}`}
     }
 
     return _inner
@@ -90,15 +94,17 @@ function range(min: number, max: number) {
         // 没有对应的值时，不需要校验，直接返回 true
         if (val === undefined || val == null) return {success: true, msg: ""};
         const isString = typeof val === "string";
-        const txt = isString ? "长度" : "值"
+        let txt: string;
         let is_valid: boolean;
         if (isString) {
+            txt = `${val}的长度`
             const len = (val as string).length;
             is_valid = len < max && len >= min;
         } else {
+            txt = `值${val}`
             is_valid = val < max && val >= min;
         }
-        return {success: is_valid, msg: is_valid ? "" : `${txt}${val}必须在范围[${min},${max})内`}
+        return {success: is_valid, msg: is_valid ? "" : `${txt}必须在范围[${min},${max})内`}
     }
 
     return _inner
@@ -120,7 +126,7 @@ function is_required(val: any): IValidateResult {
  * 验证通过返回null，失败则返回相应的错误字符串
  * @param val
  */
-function is_not_empty(val: string):IValidateResult {
+function is_not_empty(val: string): IValidateResult {
     let is_valid = is_required(val).success && val.length > 0;
     return {success: is_valid, msg: is_valid ? "" : `不能为空`};
 }
@@ -129,14 +135,14 @@ function is_not_empty(val: string):IValidateResult {
  * 校验字符串去除空字符后非空
  * @param val
  */
-function is_not_blank(val: string):IValidateResult {
+function is_not_blank(val: string): IValidateResult {
     let is_valid = is_required(val).success && val.trim().length > 0;
     return {success: is_valid, msg: is_valid ? "" : `不能只包含空白字符`};
 }
 
 
 class LeeValidationError extends Error {
-    constructor(options:any) {
+    constructor(options: any) {
         super(options);
     }
 }
