@@ -29,7 +29,7 @@ interface IField {
 /**
  * 字段基类
  */
-abstract class BaseField<T> implements IField {
+export abstract class BaseField<T> implements IField {
     value: T;
     default_value: T;
     error_message: TErrorFn;

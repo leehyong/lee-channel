@@ -1,24 +1,50 @@
-export type FieldValidator = (val: any) => boolean
+export type FieldValidator = (val: any) => IValidateResult
 export type TValidators = FieldValidator[]
 
+interface IValidateResult {
+    // 是否验证成功
+    success: boolean,
+    // 验证之后的消息
+    msg: string
+}
+
+// 验证接口
+interface IValidate {
+    // 是否进行验证过
+    is_validate: boolean,
+
+    // 验证结果
+    validate(): IValidateResult
+
+    // 验证成功后的数据
+    validated_data: { [key: string]: any }
+}
 
 /**
  *  校验字段的长度或者值不小于 min_val
  * @param min_val
  */
 function min(min_val: number) {
-    function _inner(val: string | number) {
+    /**
+     * @param val
+     */
+    function _inner(val?: string | number): IValidateResult {
         // 没有对应的值时，不需要校验，直接返回 true
-        if (val === undefined || val == null) return true;
+        if (val === undefined || val == null) return {success: true, msg: ""};
         const isString = typeof val === "string";
-        const txt = isString ? "长度":"值"
-        min.prototype.errmsg = (_val) => `${txt}${val}必须不小于${min_val}`
+        const txt = isString ? "长度" : "值"
+        let is_valid: boolean;
         if (isString) {
-            return (val as string).length >= min_val;
+            is_valid = (val as string).length >= min_val;
         } else {
-            return val >= min_val;
+            is_valid = val >= min_val;
+        }
+        return {
+            success: is_valid,
+            msg: is_valid ? "" : `${txt}${val}必须不小于${min_val}`
         }
     }
+
     return _inner
 }
 
@@ -28,18 +54,24 @@ function min(min_val: number) {
  * @param max_val
  */
 function max(max_val: number) {
-    function _inner(val: string | number) {
+    /**
+     *  验证通过返回null，失败则返回相应的错误字符串
+     * @param val
+     */
+    function _inner(val?: string | number): IValidateResult {
         // 没有对应的值时，不需要校验，直接返回 true
-        if (val === undefined || val == null) return true;
+        if (val === undefined || val == null) return {success: true, msg: ""};
         const isString = typeof val === "string";
-        const txt = isString ? "长度":"值"
-        max.prototype.errmsg = (_val) => `${txt}${val}必须不大于${max_val})`
+        const txt = isString ? "长度" : "值"
+        let is_valid: boolean;
         if (isString) {
-            return (val as string).length <= max_val;
+            is_valid = (val as string).length <= max_val;
         } else {
-            return val <= max_val;
+            is_valid = val <= max_val;
         }
+        return {success: is_valid, msg: is_valid ? "" : `${txt}${val}必须不大于${max_val})`}
     }
+
     return _inner
 }
 
@@ -49,55 +81,62 @@ function max(max_val: number) {
  * @param max
  */
 
-function range(min:number, max:number){
-    function _inner(val: string | number) {
+function range(min: number, max: number) {
+    /**
+     *  验证通过返回null，失败则返回相应的错误字符串
+     * @param val
+     */
+    function _inner(val?: string | number): IValidateResult {
         // 没有对应的值时，不需要校验，直接返回 true
-        if (val === undefined || val == null) return true;
+        if (val === undefined || val == null) return {success: true, msg: ""};
         const isString = typeof val === "string";
-        const txt = isString ? "长度":"值"
-        range.prototype.errmsg = (_val) => `${txt}${val}必须在范围内[${min},${max})`
+        const txt = isString ? "长度" : "值"
+        let is_valid: boolean;
         if (isString) {
             const len = (val as string).length;
-            return len < max && len >= min;
+            is_valid = len < max && len >= min;
         } else {
-            return val < max && val > min;
+            is_valid = val < max && val >= min;
         }
+        return {success: is_valid, msg: is_valid ? "" : `${txt}${val}必须在范围[${min},${max})内`}
     }
+
     return _inner
 }
 
 
 /**
  * 校验字段是否是必须的
+ * 验证通过返回null，失败则返回相应的错误字符串
  * @param val
  */
-function is_required(val:any){
-    return val != undefined
+function is_required(val: any): IValidateResult {
+    let is_valid = val != undefined;
+    return {success: is_valid, msg: is_valid ? "" : `必填的值`}
 }
 
-is_required.prototype.errmsg = (val) => "必填的值";
 /**
  * 校验字符串非空
+ * 验证通过返回null，失败则返回相应的错误字符串
  * @param val
  */
-function is_not_empty(val:string){
-    return is_required(val) && val.length > 0;
+function is_not_empty(val: string):IValidateResult {
+    let is_valid = is_required(val).success && val.length > 0;
+    return {success: is_valid, msg: is_valid ? "" : `不能为空`};
 }
-
-is_not_empty.prototype.errmsg = (val) => "不能为空"
 
 /**
  * 校验字符串去除空字符后非空
  * @param val
  */
-function is_not_blank(val:string){
-    return is_required(val) && val.trim().length > 0;
+function is_not_blank(val: string):IValidateResult {
+    let is_valid = is_required(val).success && val.trim().length > 0;
+    return {success: is_valid, msg: is_valid ? "" : `不能只包含空白字符`};
 }
 
-is_not_blank.prototype.errmsg = (val) =>  `不能只包含空白字符`;
 
-export class LeeValidationError extends Error{
-    constructor(options) {
+class LeeValidationError extends Error {
+    constructor(options:any) {
         super(options);
     }
 }
@@ -109,6 +148,8 @@ export {
     is_required,
     is_not_blank,
     is_not_empty,
-    LeeValidationError
+    LeeValidationError,
+    IValidate,
+    IValidateResult
 }
 
