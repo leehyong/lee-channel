@@ -1,14 +1,23 @@
-export interface BaseModel {
-    id: string | number
+import {NumberField, StringField} from "./field";
+
+export interface IBaseModel {
+    id: any
 }
 
-export interface ChannelModel extends BaseModel {
-    name: string
+export interface IChannelModel extends IBaseModel {
+    name: any
 }
 
-export interface MessageModel extends BaseModel {
-    title: string,
-    content: string,
-    channel: string,
-    createdAt: number
+export interface IMessageModel extends IBaseModel {
+    title: any,
+    content: any,
+    channel: any,
+    createdAt: any
+}
+
+
+export class ChannelModel implements IChannelModel{
+    id: any;
+    name: StringField({min:1});
+
 }
