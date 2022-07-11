@@ -30,7 +30,7 @@ interface IField {
  * 字段基类
  */
 export abstract class BaseField<T> implements IField {
-    value: T;
+    value?: T;
     default_value: T;
     error_message: TErrorFn;
     validators: TValidators;
@@ -40,23 +40,24 @@ export abstract class BaseField<T> implements IField {
             default_value,
             validators,
             error_message
-        }) {
+        }: IField) {
+        this.value = undefined
         this.default_value = default_value;
         this.validators = validators;
         this.error_message = error_message;
     }
 
-    public setValue(val: any) {
+    public setValue(val: T) {
         this.value = val
     }
 
-    public getValue() {
-        return this.value
+    public getValue(): T {
+        return this.value!
     }
 }
 
 // 范围
-type Range = number[2] | { min: number, max: number }
+type Range = { min: number, max: number }
 
 /**
  * StringField 的可选项
@@ -71,7 +72,7 @@ export interface FieldOptions {
     error_message?: TErrorFn
 }
 
-export interface StringFieldOptions extends FieldOptions{
+export interface StringFieldOptions extends FieldOptions {
     is_not_blank?: boolean,
     is_not_empty?: boolean,
 }
@@ -87,7 +88,9 @@ function common_options(options: FieldOptions): IField {
         validators.push(is_required);
     } else {
         // 默认不是必填参数
-        validators.push((_) => false);
+        validators.push((_) => {
+            return {success: true, msg: ""}
+        });
     }
     // 参数校验
     if ((!!options.min || !!options.max) && !!options.range) {
@@ -133,9 +136,10 @@ export function StringField(options: StringFieldOptions) {
     return _StringField
 }
 
-export function NumberField(options:FieldOptions) {
+export function NumberField(options: FieldOptions) {
     const _options = common_options(options);
-    class _NumberField extends BaseField<T = number> {
+
+    class _NumberField extends BaseField<number> {
         constructor() {
             super(_options);
         }

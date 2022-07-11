@@ -11,7 +11,7 @@ interface IValidateResult {
 // 验证接口
 interface IValidate {
     // 是否进行验证过
-    is_validate: boolean,
+    is_validated: boolean,
 
     // 验证结果
     validate(): IValidateResult

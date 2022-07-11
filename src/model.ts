@@ -18,60 +18,78 @@ export interface IMessageModel extends IBaseModel {
 
 abstract class BaseModel implements IValidate, IBaseModel {
     public id: any;
-    public is_validate: boolean;
+    public is_validated: boolean;
     public validated_data: { [key: string]: any }
 
-    protected constructor() {
-        this.is_validate = false;
+    protected constructor(_id:any) {
+        this.id = _id
+        this.is_validated = false;
         this.validated_data = {};
     }
 
-    protected validate(): IValidateResult {
-        let key: keyof this;
+    /**
+     * 校验函数， 校验当前model都所有字段
+     */
+    public validate(): IValidateResult {
+        // let key: keyof this;
         const ret: IValidateResult = {msg: "", success: false};
-        const validate_msg: string[] = [];
-        for (key in this) {
+        const validate_msgs: string[] = [];
+        for (let key in this) {
             const field = this[key];
             if (field instanceof BaseField) {
+                let success = true;
                 for (let validator of field.validators) {
-                    const validate_result:IValidateResult = validator(field.getValue());
+                    const validate_result: IValidateResult = validator(field.getValue());
                     if (!validate_result.success) {
                         // 用户自定义的错误消息比默认的错误消息优先级高
                         if (field.error_message) {
                             if (typeof field.error_message === "function") {
-                                validate_msg.push(field.error_message(field.getValue()));
+                                validate_msgs.push(field.error_message(field.getValue()));
                             } else {
-                                validate_msg.push(field.error_message);
+                                validate_msgs.push(field.error_message);
                             }
-                        } else{
-                            validate_msg.push(validate_result.msg);
+                        } else {
+                            validate_msgs.push(validate_result.msg);
                         }
                         // 只要一个字段报错就退出当前 for 循环、继续迭代下个字段
+                        success = false;
                         break
-                    }else{
-                        this.validated_data[key] = field.getValue();
                     }
+                }
+                // 所有字段都校验成功之后才把数据写进验证结果集里
+                if (success){
+                    this.validated_data[key] = field.getValue();
                 }
             } else if (key === "id") {
                 this.validated_data.id = this.id
             }
         }
+        this.is_validated = true;
+        ret.success = validate_msgs.length == 0;
+        ret.msg = validate_msgs.join(";")
         return ret;
     }
 
 }
 
 export class ChannelModel extends BaseModel implements IChannelModel {
-    private name: any;
-    public is_validate: boolean;
+    public name: any;
+    private static nameCls = StringField(
+        {
+            is_not_blank:true,
+            min: 1,
+            required: true,
+            max:30
+        }
+    )
 
     constructor(_id: any) {
-        super();
-        this.id = _id;
-        this.name = StringField({min: 1, required: true})
+        super(_id);
+        this.name = new ChannelModel.nameCls()
     }
+
     // builder 模式， 支持链式调用
-    public setName(name:string){
+    public setName(name?: string|null) {
         this.name.setValue(name)
         return this
     }
