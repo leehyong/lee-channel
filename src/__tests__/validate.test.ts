@@ -111,4 +111,54 @@ describe("validate", () => {
             expect(result.msg).toBe(item.msg);
         }
     });
+
+    test("is_required: any", () => {
+        const fn = is_required;
+        let result;
+        const tests: ITestData[] = [
+            {success: false, msg: `必填的值`},
+            {val: "lee", success: true, msg: ``},
+            {val: "leesen", success: true, msg: ``},
+            {val: 10, success: true, msg: ``},
+            {val: false, success: true, msg: ``},
+            {val: {}, success: true, msg: ``},
+            {val: {ok:false}, success: true, msg: ``},
+            {val: "leeseno", success: true, msg: ``},
+        ]
+        for (let item of tests){
+            result = fn(item.val);
+            expect(result.success).toBe(item.success);
+            expect(result.msg).toBe(item.msg);
+        }
+    });
+
+    test("is_not_empty: string", () => {
+        const fn = is_not_empty;
+        let result;
+        const tests: ITestData[] = [
+            {val: "", success: false, msg: `不能为空`},
+            {val: "    ", success: true, msg: ``},
+            {val: "leesenfa", success: true, msg: ``},
+        ]
+        for (let item of tests){
+            result = fn(item.val);
+            expect(result.success).toBe(item.success);
+            expect(result.msg).toBe(item.msg);
+        }
+    });
+
+    test("is_not_blank: string", () => {
+        const fn = is_not_blank;
+        let result;
+        const tests: ITestData[] = [
+            {val: "", success: false, msg: `不能为空字符串或者只包含空白字符`},
+            {val: "    ", success: false, msg: `不能为空字符串或者只包含空白字符`},
+            {val: "leesenfa", success: true, msg: ``},
+        ]
+        for (let item of tests){
+            result = fn(item.val);
+            expect(result.success).toBe(item.success);
+            expect(result.msg).toBe(item.msg);
+        }
+    });
 })

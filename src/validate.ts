@@ -127,7 +127,7 @@ function is_required(val: any): IValidateResult {
  * @param val
  */
 function is_not_empty(val: string): IValidateResult {
-    let is_valid = is_required(val).success && val.length > 0;
+    let is_valid = val.length > 0;
     return {success: is_valid, msg: is_valid ? "" : `不能为空`};
 }
 
@@ -136,8 +136,8 @@ function is_not_empty(val: string): IValidateResult {
  * @param val
  */
 function is_not_blank(val: string): IValidateResult {
-    let is_valid = is_required(val).success && val.trim().length > 0;
-    return {success: is_valid, msg: is_valid ? "" : `不能只包含空白字符`};
+    let is_valid = val.trim().length > 0;
+    return {success: is_valid, msg: is_valid ? "" : `不能为空字符串或者只包含空白字符`};
 }
 
 
