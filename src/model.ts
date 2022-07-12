@@ -45,6 +45,7 @@ export abstract class BaseModel implements IValidate, IBaseModel {
             if (field instanceof BaseField) {
                 let success = true;
                 const msgs = [];
+                // console.log(field.validators)
                 for (let validator of field.validators) {
                     const validate_result: IValidateResult = validator(field.getValue());
                     if (!validate_result.success) {

@@ -5,7 +5,6 @@ import {
     min,
     max,
     is_not_blank,
-    FieldValidator,
     is_not_empty,
     is_required
 } from './validate'
@@ -52,7 +51,7 @@ export abstract class BaseField<T> implements IField {
     }
 
     public getValue(): T {
-        return !!this.value ? this.value : this.default_value;
+        return this.value != undefined ? this.value : this.default_value;
     }
 }
 
@@ -130,6 +129,9 @@ export function StringField(options: StringFieldOptions) {
     class _StringField extends BaseField<string> {
         constructor() {
             super(_options);
+        }
+        public override getValue(): string {
+            return this.value != undefined ? this.value.trim() : this.default_value;
         }
     }
 

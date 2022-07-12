@@ -41,9 +41,10 @@ describe("api channel", () => {
 
         resp = await testApp
             .post("/channel")
-            .set('Accept', 'application/json')
-            .send({"name": name});
+            .send({"name": name})
+            .set('Accept', 'application/json');
         expect(resp.status).toBe(400);
+        expect(resp.body.message).toBe("已有名为lee1的channel，请检查");
     });
 
     test("channel error", async () => {
