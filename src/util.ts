@@ -1,5 +1,5 @@
 import {Uuid, UuidOptions} from 'node-ts-uuid';
-import {DEFAULT_ID_TYPE, IdType} from "./consts";
+import {ID_GLOBAL_TYPE, IdType} from "./consts";
 
 interface IdGenerator {
     Id(): string | number
@@ -47,7 +47,7 @@ const _id_generators: { [key: string]: IdGenerator } = {}
  * @param id_type : "AUTO"|"UUID"|"TIMESTAMP"
  * @return string | number
  */
-function get_model_id(id_type: IdType=DEFAULT_ID_TYPE): string | number {
+function get_model_id(id_type: IdType = ID_GLOBAL_TYPE): string | number {
     //
     let generator_obj: IdGenerator | undefined = _id_generators[id_type]
     if (generator_obj === undefined) {
@@ -74,12 +74,31 @@ function get_model_id(id_type: IdType=DEFAULT_ID_TYPE): string | number {
  * 通过 id_type 来获取对应的id， 并将其转为字符串
  * @param id_type : "AUTO"|"UUID"|"TIMESTAMP"
  */
-function get_model_id_str(id_type: IdType=DEFAULT_ID_TYPE):string{
+function get_model_id_str(id_type: IdType = ID_GLOBAL_TYPE): string {
     return get_model_id(id_type).toString();
+}
+
+interface ResultData {
+    code: number,
+    success: boolean,
+    data: any,
+    message: string
+}
+
+class ReusltUtil {
+
+    public static Ok(data: any, message?: string): ResultData {
+        return {code: 0, data, message: !!message ? message : '', success: true}
+    }
+
+    public static Error(code: number, message?: string): ResultData {
+        return {code, message: !!message ? message : '', data: null, success: false}
+    }
 }
 
 export {
     get_model_id,
-    get_model_id_str
+    get_model_id_str,
+    ReusltUtil
 }
 

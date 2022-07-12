@@ -93,6 +93,13 @@ export abstract class BaseModel implements IValidate, IBaseModel {
         }
         return this
     }
+
+    public setAllAttrs(options:{[key:string]:any}){
+        for (let attr in options){
+            this.setAttr(attr as keyof this, options[attr])
+        }
+        return this;
+    }
 }
 
 /**
