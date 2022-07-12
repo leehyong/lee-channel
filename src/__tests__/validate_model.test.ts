@@ -1,15 +1,15 @@
 import {describe, test, expect} from "@jest/globals";
 
-import {ChannelModel, MessageModel, BaseModel} from "../model";
+import {ChannelModel, MessageModel, BaseModel, generate_fields} from "../model";
 import {StringField} from "../field";
 
 export class TestMessageModel extends MessageModel {
-    private static testCls = StringField({required: false, min: 3, error_message:(val) => `${val}的长度不能低于3`})
-    public test:any;
+    private static _test = StringField({required: false, min: 3, error_message:(val) => `${val}的长度不能低于3`})
 
     constructor(_id: any) {
         super(_id);
-        this.test = BaseModel.generate_field(TestMessageModel.testCls);
+        this.fields = {...this.fields, ...generate_fields(TestMessageModel as any)}
+        // this.test = BaseModel.generate_field(TestMessageModel.testCls);
     }
 }
 

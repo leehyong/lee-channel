@@ -1,9 +1,8 @@
-import express, {Application, Request, Response, NextFunction} from 'express'
+import express, {Application, Response, NextFunction} from 'express'
 import {ID_CHANNEL_TYPE} from "../consts";
 import {store} from "../stores/store";
 import {get_model_id_str, ResultUtil} from "../util";
 import {ChannelModel, IChannelModel} from "../model";
-import {message} from "./message";
 
 const channel = express.Router()
 
@@ -33,7 +32,7 @@ channel.get('/:id', (req, res, next) => {
 channel.post("", (req, res, next) => {
     const id = get_model_id_str(ID_CHANNEL_TYPE);
     const channelValidateModel = new ChannelModel(id);
-    console.log(req.body)
+    // console.log(req.body)
     channelValidateModel.setAllAttrs(req.body)
     const vr = channelValidateModel.validate();
     if (!vr.success) {

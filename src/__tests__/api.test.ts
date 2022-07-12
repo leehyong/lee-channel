@@ -153,6 +153,6 @@ describe("api message", () => {
         expect(resp.status).toBe(400);
         expect(resp.body.success).toBe(false);
         expect(resp.body.data).toBeNull();
-        expect(resp.body.message).toBe("title:必填的值;content:a的长度必须在范围[2,1024)内");
+        expect(resp.body.message).toBe("content:a的长度必须在范围[2,1024)内;title:必填的值");
     })
 });
