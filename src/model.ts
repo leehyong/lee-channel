@@ -52,21 +52,14 @@ export function generate_fields<T extends BaseModel,
 }
 
 export abstract class BaseModel implements IValidate {
-    public id: any;
     public is_validated: boolean;
     public validated_data: { [key: string]: any }
     protected fields: { [key: string]: any }
 
     protected constructor(_id: any) {
-        this.id = _id
         this.is_validated = false;
         this.validated_data = {};
         this.fields = {id: _id};
-    }
-
-
-    protected static generate_field(cls: any): IField {
-        return new cls()
     }
 
     /**
@@ -107,7 +100,7 @@ export abstract class BaseModel implements IValidate {
                     validate_msgs.push(`${key}:${msgs.join("-")}`)
                 }
             } else if (key === "id") {
-                this.validated_data.id = this.id
+                this.validated_data.id = this.fields.id
             }
         }
         this.is_validated = true;
@@ -163,10 +156,6 @@ export class ChannelModel extends BaseModel {
  * Message model
  */
 export class MessageModel extends BaseModel {
-    // channel: any;
-    // content: any;
-    // createdAt: any;
-    // title: any;
     private static _channel = StringField({
         min: 1, required: true, is_not_empty: true, default_value: "1"
     })
@@ -182,11 +171,6 @@ export class MessageModel extends BaseModel {
     constructor(_id: any) {
         super(_id);
         this.fields = {...this.fields, ...generate_fields(MessageModel as any)}
-        //
-        // this.channel = BaseModel.generate_field(MessageModel.channelCls);
-        // this.title = BaseModel.generate_field(MessageModel.titleCls);
-        // this.content = BaseModel.generate_field(MessageModel.contentCls);
-        // this.createdAt = BaseModel.generate_field(MessageModel.createdAtCls);
     }
 }
 
