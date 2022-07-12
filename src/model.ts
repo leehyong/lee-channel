@@ -140,28 +140,6 @@ export abstract class BaseModel implements IValidate {
 /**
  * Channel model
  */
-export class _ChannelModel extends BaseModel implements IChannelModel {
-    public name: any;
-    public static test = 100;
-    public static test2 = 100;
-    public static test3 = "dadadwqeq";
-
-    private static nameCls = StringField(
-        {
-            is_not_blank: true,
-            min: 1,
-            required: true,
-            max: 30
-        }
-    )
-
-    constructor(_id: any) {
-        super(_id);
-        this.name = BaseModel.generate_field(_ChannelModel.nameCls);
-        // this.createdAt = BaseModel.generate_field(ChannelModel.createdAtCls);
-    }
-}
-
 
 export class ChannelModel extends BaseModel {
     private static _name = StringField(
