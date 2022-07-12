@@ -22,7 +22,8 @@ message.get(
     '/:channel/:page',
     common,
     (req, res, next) => {
-        const page = parseInt(req.params.page, 10) || 1
+        let page = parseInt(req.params.page, 10)
+        if (!page || page < 1) page = 1
         const data = store.message.page(req.params.channel, page);
         res.status(200)
             .json(ResultUtil.Ok(data));
@@ -30,13 +31,14 @@ message.get(
 
 // 发送消息
 message.post(
-    "'/:channel",
+    "/:channel",
     common,
     (req, res, next) => {
         const id = get_model_id_str(ID_MESSAGE_TYPE);
         const msgValidateModel = new MessageModel(id);
-        msgValidateModel.setAttr("channel", req.params.channel);
         msgValidateModel.setAllAttrs(req.body);
+        msgValidateModel.setAttr("channel", req.params.channel);
+        msgValidateModel.setAttr("createdAt", new Date().getTime());
         const vr = msgValidateModel.validate();
         if (!vr.success) {
             res.status(400).json(ResultUtil.Error(1, vr.msg))

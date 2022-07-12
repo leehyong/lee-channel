@@ -136,20 +136,20 @@ export class MessageModel extends BaseModel implements IMessageModel {
         min: 1, required: true, is_not_empty: true, default_value: "1"
     })
     private static contentCls = StringField({
-        range: {min: 1, max: 1024},
+        range: {min: 2, max: 1024},
         required: true,
         is_not_blank: true,
         default_value: "hello world"
     })
-    private static createdAtCls = NumberField({required: true, min: 100})
+    private static createdAtCls = NumberField({required: false, min: 100})
     private static titleCls = StringField({required: true, min: 1, is_not_blank: true})
 
     constructor(_id: any) {
         super(_id);
         this.channel = BaseModel.generate_field(MessageModel.channelCls);
+        this.title = BaseModel.generate_field(MessageModel.titleCls);
         this.content = BaseModel.generate_field(MessageModel.contentCls);
         this.createdAt = BaseModel.generate_field(MessageModel.createdAtCls);
-        this.title = BaseModel.generate_field(MessageModel.titleCls);
     }
 }
 
