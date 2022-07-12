@@ -85,7 +85,7 @@ interface ResultData {
     message: string
 }
 
-class ReusltUtil {
+class ResultUtil {
 
     public static Ok(data: any, message?: string): ResultData {
         return {code: 0, data, message: !!message ? message : '', success: true}
@@ -99,6 +99,6 @@ class ReusltUtil {
 export {
     get_model_id,
     get_model_id_str,
-    ReusltUtil
+    ResultUtil
 }
 

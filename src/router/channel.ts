@@ -1,8 +1,9 @@
 import express, {Application, Request, Response, NextFunction} from 'express'
 import {ID_CHANNEL_TYPE} from "../consts";
 import {store} from "../stores/store";
-import {get_model_id_str, ReusltUtil} from "../util";
+import {get_model_id_str, ResultUtil} from "../util";
 import {ChannelModel, IChannelModel} from "../model";
+import {message} from "./message";
 
 const channel = express.Router()
 
@@ -10,7 +11,7 @@ const channel = express.Router()
 channel.get('', (req, res, next) => {
     const channels = store.channel.list();
     res.status(200)
-        .json(ReusltUtil.Ok(channels));
+        .json(ResultUtil.Ok(channels));
 })
 
 // 获取某个channel
@@ -21,9 +22,9 @@ channel.get('/:id', (req, res, next) => {
     let data;
     if (!channel) {
         code = 400;
-        data = ReusltUtil.Error(1, `channel:${id}不存在`)
+        data = ResultUtil.Error(1, `channel:${id}不存在`)
     } else {
-        data = ReusltUtil.Ok(channel)
+        data = ResultUtil.Ok(channel)
     }
     res.status(code).json(data);
 })
@@ -35,15 +36,15 @@ channel.post("", (req, res, next) => {
     channelValidateModel.setAllAttrs(req.body)
     const vr = channelValidateModel.validate();
     if (!vr.success) {
-        res.status(400).json(ReusltUtil.Error(1, vr.msg))
+        res.status(400).json(ResultUtil.Error(1, vr.msg))
         return;
     }
     const result = store.channel.add(channelValidateModel.validated_data as IChannelModel);
     if (!result) {
-        res.status(400).json(ReusltUtil.Error(1, "新增channel失败，请检查"))
+        res.status(400).json(ResultUtil.Error(1, `已有名为${channelValidateModel.validated_data.name}的channel，请检查`))
         return;
     }
-    res.status(201).json(ReusltUtil.Error(0, `新增成功:${id}`));
+    res.status(201).json(ResultUtil.Ok(0, `新增成功:${id}`));
 
 })
 

@@ -51,10 +51,13 @@ class ChannelManage implements IChannelOp {
     // 单例模式
     public static instance: ChannelManage = new ChannelManage();
     public channels: Map<string, IChannelModel>;
+    // channel 名字对应的 id
+    public channel_names:Map<string, string>;
 
     // 私有构造函数
     private constructor() {
         this.channels = new Map();
+        this.channel_names = new Map();
     }
 
     /**
@@ -63,8 +66,9 @@ class ChannelManage implements IChannelOp {
      * @return 如果 channel 对应的name不存在， 则新增，返回true； 否则，返回false
      */
     add(model: IChannelModel): boolean {
-        if (this.channels.get(model.name as string) === undefined) {
-            this.channels.set(model.name as string, model);
+        if (this.channel_names.get(model.id as string) === undefined) {
+            this.channels.set(model.id as string, model);
+            this.channel_names.set(model.name as string, model.id);
             return true
         }
         return false
