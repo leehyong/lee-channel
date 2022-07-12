@@ -79,9 +79,18 @@ export abstract class BaseModel implements IValidate, IBaseModel {
         return ret;
     }
 
-    // builder 模式， 支持链式调用
+    /**
+     * 设置 prop 对应字段的值
+     * builder 模式， 支持链式调用
+     * @param prop
+     * @param val
+     */
     public setAttr(prop: keyof this, val?: any | null) {
-        (this[prop] as any).setValue(val)
+        if(this[prop] instanceof BaseField){
+            (this[prop] as any).setValue(val)
+        }else{
+            // 什么都不做
+        }
         return this
     }
 }
