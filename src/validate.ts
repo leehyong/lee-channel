@@ -14,7 +14,7 @@ interface IValidate {
     is_validated: boolean,
 
     // 验证结果
-    validate(): IValidateResult
+    validate(): IValidateResult,
 
     // 验证成功后的数据
     validated_data: { [key: string]: any }
@@ -28,7 +28,7 @@ function min(min_val: number) {
     /**
      * @param val
      */
-    function _inner(val?: string | number): IValidateResult {
+    function min_inner(val?: string | number): IValidateResult {
         // 没有对应的值时，不需要校验，直接返回 true
         if (val === undefined || val == null) return {success: true, msg: ""};
         const isString = typeof val === "string";
@@ -47,7 +47,7 @@ function min(min_val: number) {
         }
     }
 
-    return _inner
+    return min_inner
 }
 
 
@@ -60,7 +60,7 @@ function max(max_val: number) {
      *  验证通过返回null，失败则返回相应的错误字符串
      * @param val
      */
-    function _inner(val?: string | number): IValidateResult {
+    function max_inner(val?: string | number): IValidateResult {
         // 没有对应的值时，不需要校验，直接返回 true
         if (val === undefined || val == null) return {success: true, msg: ""};
         const isString = typeof val === "string";
@@ -76,7 +76,7 @@ function max(max_val: number) {
         return {success: is_valid, msg: is_valid ? "" : `${txt}必须不大于${max_val}`}
     }
 
-    return _inner
+    return max_inner
 }
 
 /**
@@ -90,7 +90,7 @@ function range(min: number, max: number) {
      *  验证通过返回null，失败则返回相应的错误字符串
      * @param val
      */
-    function _inner(val?: string | number): IValidateResult {
+    function range_inner(val?: string | number): IValidateResult {
         // 没有对应的值时，不需要校验，直接返回 true
         if (val === undefined || val == null) return {success: true, msg: ""};
         const isString = typeof val === "string";
@@ -107,7 +107,7 @@ function range(min: number, max: number) {
         return {success: is_valid, msg: is_valid ? "" : `${txt}必须在范围[${min},${max})内`}
     }
 
-    return _inner
+    return range_inner
 }
 
 
