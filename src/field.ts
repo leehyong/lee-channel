@@ -17,7 +17,7 @@ type TErrorFn = null | string | FieldErrorMessageFn
 type TRequiredFn = null | boolean | RequiredFn
 
 
-interface IField {
+export interface IField {
     // 字段的默认值
     default_value: any;
     // 字段的验证器
