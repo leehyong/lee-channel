@@ -18,7 +18,7 @@ export interface IMessageModel extends IBaseModel {
 
 }
 
-abstract class BaseModel implements IValidate, IBaseModel {
+export abstract class BaseModel implements IValidate, IBaseModel {
     public id: any;
     public is_validated: boolean;
     public validated_data: { [key: string]: any }
@@ -126,7 +126,7 @@ export class MessageModel extends BaseModel implements IMessageModel {
         default_value: "hello world"
     })
     private static createdAtCls = NumberField({required: true, min: 100})
-    private static titleCls = StringField({required: true, min: 20, is_not_blank: true})
+    private static titleCls = StringField({required: true, min: 1, is_not_blank: true})
 
     constructor(_id: any) {
         super(_id);
@@ -136,5 +136,4 @@ export class MessageModel extends BaseModel implements IMessageModel {
         this.title = BaseModel.generate_field(MessageModel.titleCls);
     }
 }
-
 
