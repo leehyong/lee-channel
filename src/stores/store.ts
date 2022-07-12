@@ -66,7 +66,7 @@ class ChannelManage implements IChannelOp {
      * @return 如果 channel 对应的name不存在， 则新增，返回true； 否则，返回false
      */
     add(model: IChannelModel): boolean {
-        if (this.channel_names.get(model.id as string) === undefined) {
+        if (this.channel_names.get(model.name as string) === undefined) {
             this.channels.set(model.id as string, model);
             this.channel_names.set(model.name as string, model.id);
             return true
