@@ -6,7 +6,8 @@ export interface IBaseModel {
 }
 
 export interface IChannelModel extends IBaseModel {
-    name: any
+    name: any,
+    createdAt: any
 }
 
 export interface IMessageModel extends IBaseModel {
@@ -14,6 +15,7 @@ export interface IMessageModel extends IBaseModel {
     content: any,
     channel: any,
     createdAt: any
+
 }
 
 abstract class BaseModel implements IValidate, IBaseModel {
@@ -74,7 +76,17 @@ abstract class BaseModel implements IValidate, IBaseModel {
 
 export class ChannelModel extends BaseModel implements IChannelModel {
     public name: any;
+    public createdAt: any;
+
     private static nameCls = StringField(
+        {
+            is_not_blank:true,
+            min: 1,
+            required: true,
+            max:30
+        }
+    )
+    private static createdAtCls = StringField(
         {
             is_not_blank:true,
             min: 1,
@@ -89,7 +101,7 @@ export class ChannelModel extends BaseModel implements IChannelModel {
     }
 
     // builder 模式， 支持链式调用
-    public setName(name?: string|null) {
+    public setName(name?: any|null) {
         this.name.setValue(name)
         return this
     }
@@ -97,4 +109,5 @@ export class ChannelModel extends BaseModel implements IChannelModel {
     public validate(): IValidateResult {
         return super.validate();
     }
+
 }
