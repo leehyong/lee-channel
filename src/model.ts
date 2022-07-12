@@ -22,7 +22,9 @@ export interface IMessageModel extends IBaseModel {
  * 判定某个类是 BaseField 的子类, 通过范型检查即认为是 BaseField 的子类
  * @param clz
  */
-function is_filed_cls<T>(clz: { new(): T, [key: string]: any }): boolean {
+function is_field_cls<T>(clz: { new(): T, [key: string]: any }): boolean {
+    let ty = clz.__proto__;
+    while (ty && ty !== BaseField){ ty = ty.__proto__;}
     return clz.__proto__ === BaseField;
 }
 
@@ -41,7 +43,7 @@ export function generate_fields<T extends BaseModel,
     const fields: { [key: string]: F } = {}
     for (let attr in clz) {
         // 只识别以 _ 开头的属性
-        if (attr[0] === "_" && is_filed_cls(clz[attr])) {
+        if (attr[0] === "_" && is_field_cls(clz[attr])) {
             // 去掉开头的 _ , 并创建一个字段实例对象
             fields[attr.substring(1)] = new clz[attr]();
         }
