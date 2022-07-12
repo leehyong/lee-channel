@@ -66,7 +66,7 @@ abstract class BaseModel implements IValidate, IBaseModel {
                 // 所有字段都校验成功之后才把数据写进验证结果集里
                 if (success) {
                     this.validated_data[key] = field.getValue();
-                }else{
+                } else {
                     validate_msgs.push(`${key}:${msgs.join("-")}`)
                 }
             } else if (key === "id") {
@@ -79,11 +79,18 @@ abstract class BaseModel implements IValidate, IBaseModel {
         return ret;
     }
 
+    // builder 模式， 支持链式调用
+    public setAttr(prop: keyof this, val?: any | null) {
+        (this[prop] as any).setValue(val)
+        return this
+    }
 }
 
+/**
+ * Channel model
+ */
 export class ChannelModel extends BaseModel implements IChannelModel {
     public name: any;
-    // public createdAt: any;
 
     private static nameCls = StringField(
         {
@@ -93,29 +100,41 @@ export class ChannelModel extends BaseModel implements IChannelModel {
             max: 30
         }
     )
-    // private static createdAtCls = StringField(
-    //     {
-    //         is_not_blank: true,
-    //         min: 1,
-    //         required: true,
-    //         max: 30
-    //     }
-    // )
 
     constructor(_id: any) {
         super(_id);
         this.name = BaseModel.generate_field(ChannelModel.nameCls);
         // this.createdAt = BaseModel.generate_field(ChannelModel.createdAtCls);
     }
-
-    // builder 模式， 支持链式调用
-    public setAttr(prop: keyof this, val?: any | null) {
-        (this[prop] as any).setValue(val)
-        return this
-    }
-
-    public validate(): IValidateResult {
-        return super.validate();
-    }
-
 }
+
+/**
+ * Message model
+ */
+export class MessageModel extends BaseModel implements IMessageModel {
+    channel: any;
+    content: any;
+    createdAt: any;
+    title: any;
+    private static channelCls = StringField({
+        min: 1, required: true, is_not_empty: true, default_value: "1"
+    })
+    private static contentCls = StringField({
+        range: {min: 1, max: 1024},
+        required: true,
+        is_not_blank: true,
+        default_value: "hello world"
+    })
+    private static createdAtCls = NumberField({required: true, min: 100})
+    private static titleCls = StringField({required: true, min: 20, is_not_blank: true})
+
+    constructor(_id: any) {
+        super(_id);
+        this.channel = BaseModel.generate_field(MessageModel.channelCls);
+        this.content = BaseModel.generate_field(MessageModel.contentCls);
+        this.createdAt = BaseModel.generate_field(MessageModel.createdAtCls);
+        this.title = BaseModel.generate_field(MessageModel.titleCls);
+    }
+}
+
+

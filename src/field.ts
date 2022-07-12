@@ -52,7 +52,7 @@ export abstract class BaseField<T> implements IField {
     }
 
     public getValue(): T {
-        return this.value!
+        return !!this.value ? this.value : this.default_value;
     }
 }
 

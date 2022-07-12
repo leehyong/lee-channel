@@ -70,7 +70,16 @@ function get_model_id(id_type: IdType=DEFAULT_ID_TYPE): string | number {
     return generator_obj!.Id();
 }
 
+/**
+ * 通过 id_type 来获取对应的id， 并将其转为字符串
+ * @param id_type : "AUTO"|"UUID"|"TIMESTAMP"
+ */
+function get_model_id_str(id_type: IdType=DEFAULT_ID_TYPE):string{
+    return get_model_id(id_type).toString();
+}
+
 export {
-    get_model_id
+    get_model_id,
+    get_model_id_str
 }
 
