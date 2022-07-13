@@ -55,13 +55,19 @@ export function generate_fields<T extends BaseValidate,
 }
 
 /**
- * 只要
+ * 字段验证基类
+ * 只要继承该类，就能自动的对传递对数据进行验证。
+ * 调用 validate 方法，对字段进行验证
+ * 调用 validated_data，获取字段验证通过之后对数据， 必须在 调用 validate 方法之后， 否则为空对象 {}
  */
 export abstract class BaseValidate implements IValidate {
     public is_validated: boolean;
     public validated_data: { [key: string]: any }
+    // 保持所有 继承自BaseField的对象
     protected fields: { [key: string]: any }
+    // 存储当前 this 对应的 class,
     protected model_clz: any | null = null;
+    // 标志位， 表面当前对象是否已经自动生成过字段了
     private is_generated_fields:boolean;
 
     protected constructor(_id: any) {
@@ -72,7 +78,7 @@ export abstract class BaseValidate implements IValidate {
     }
 
     /**
-     * 校验函数， 校验当前model都所有字段
+     * 校验函数， 校验当前model的所有字段
      */
     public validate(): IValidateResult {
         // let key: keyof this;
@@ -164,6 +170,7 @@ export abstract class BaseValidate implements IValidate {
  */
 
 export class ChannelValidate extends BaseValidate {
+    // 校验字段 _name, 值会在this.fields 对象上自动生成 name 属性，用于校验
     private static _name = StringField(
         {
             is_not_blank: true,
@@ -176,7 +183,6 @@ export class ChannelValidate extends BaseValidate {
 
     constructor(_id: any) {
         super(_id);
-        // this.fields = {...this.fields, ...generate_fields(ChannelValidate as any)}
     }
 }
 
@@ -185,16 +191,20 @@ export class ChannelValidate extends BaseValidate {
  */
 export class MessageValidate extends BaseValidate {
     override model_clz = MessageValidate;
+    // 校验字段 _channel, 值会在this.fields 对象上自动生成 channel 属性，用于校验
     private static _channel = StringField({
         min: 1, required: true, is_not_empty: true, default_value: "1"
     })
+    // 校验字段 _content, 值会在this.fields 对象上自动生成 content 属性，用于校验
     private static _content = StringField({
         range: {min: 2, max: 1024},
         required: true,
         is_not_blank: true,
         default_value: "hello world"
     })
+    // 校验字段 _createdAt, 值会在this.fields 对象上自动生成 createdAt 属性，用于校验
     private static _createdAt = NumberField({required: false, min: 100})
+    // 校验字段 _title, 值会在this.fields 对象上自动生成 title 属性，用于校验
     private static _title = StringField({required: true, min: 1, is_not_blank: true})
 
     constructor(_id: any) {

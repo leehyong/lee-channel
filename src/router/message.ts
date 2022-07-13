@@ -6,10 +6,10 @@ import {ChannelValidate, IChannelValidate, IMessageValidate, MessageValidate} fr
 
 const message = express.Router()
 
-function common(req:Request, res:Response, next:NextFunction){
+function common(req: Request, res: Response, next: NextFunction) {
     const channel = req.params.channel
     const _channel = store.channel.get(channel);
-    if (!_channel){
+    if (!_channel) {
         res.status(400)
             .json(ResultUtil.Error(1, "channel不存在，请检查"));
         return
@@ -18,6 +18,12 @@ function common(req:Request, res:Response, next:NextFunction){
 }
 
 // 获取某个channel某页的消息
+// 路径参数：
+//  channel: channel id
+//  page:  某页
+// req.body 参数 无
+// 返回json格式：
+//  {"code":0,"success":true,"message":"","data":{"page":1, "page_size":10,"total":120, "data":[{"title":"xxx", "content":"xzc","createAt":1221233,"channel":"2","id":"1000"}}
 message.get(
     '/:channel/:page',
     common,
@@ -30,6 +36,8 @@ message.get(
     })
 
 // 发送消息
+// req.body 参数 {"title":"xxx", "content":"xzc"}
+// 返回json格式： {"code":0,"success":true,"message":"发送成功","data":null}
 message.post(
     "/:channel",
     common,

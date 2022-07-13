@@ -6,7 +6,6 @@ import {authorize, authenticate} from "./middleware";
 import {channel} from "./router/channel";
 import {message} from "./router/message";
 import {LeeValidationError} from "./validate";
-import {ChannelValidate} from "./model";
 
 const app: Application = express();
 

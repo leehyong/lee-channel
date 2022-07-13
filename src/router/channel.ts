@@ -7,13 +7,19 @@ import {ChannelValidate, IChannelValidate} from "../model";
 const channel = express.Router()
 
 // 获取全部channel
+// req.body 参数 无
+// 返回json格式：
+//  {"code":0,"success":true,"message":"","data":[{"id":"1","name":"channel的名字"},{"id":"1","name":"channel的名字"}]}
 channel.get('', (req, res, next) => {
     const channels = store.channel.list();
     res.status(200)
         .json(ResultUtil.Ok(channels));
 })
 
-// 获取某个channel
+// 获取某个channel的信息
+// req.body 参数 无
+// 返回json格式：
+//   {"code":0,"success":true,"message":"","data":{"id":"1","name":"channel的名字"}}
 channel.get('/:id', (req, res, next) => {
     const id = req.params.id;
     const channel = store.channel.get(id);
@@ -28,7 +34,10 @@ channel.get('/:id', (req, res, next) => {
     res.status(code).json(data);
 })
 
-// 创建一个channel
+// 创建一个channel,
+// req.body 参数 {"name":"channel名字"}
+// 返回json格式：
+//  {"code":0,"success":true,"message":"","data":"成功"}
 channel.post("", (req, res, next) => {
     const id = get_model_id_str(ID_CHANNEL_TYPE);
     const channelValidateModel = new ChannelValidate(id);

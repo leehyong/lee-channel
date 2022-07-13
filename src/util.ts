@@ -85,8 +85,8 @@ interface ResultData {
     message: string
 }
 
+// 对返回对结果的格式进行统一
 class ResultUtil {
-
     public static Ok(data: any, message?: string): ResultData {
         return {code: 0, data, message: !!message ? message : '', success: true}
     }
