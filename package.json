@@ -8,8 +8,8 @@
     "start": "node dist/app.js",
     "dev": "nodemon src/app.ts",
     "build": "tsc -p tsconfig.json",
-    "test": "jest",
-    "test-c": "jest --coverage"
+    "test": "jest --force-exit",
+    "test-c": "jest --coverage --force-exit"
   },
   "author": "",
   "license": "ISC",
