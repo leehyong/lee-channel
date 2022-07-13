@@ -17,7 +17,7 @@ app.use(express.urlencoded({extended: true}));
 // 授权中间件
 app.use(authorize);
 app.get('/', (req: Request, res: Response, next: NextFunction) => {
-    new ChannelModel(1);
+    // new ChannelModel(1);
     res.send('Hello World!');
 });
 // channel 相关路由
