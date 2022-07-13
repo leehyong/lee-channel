@@ -2,16 +2,11 @@ import {describe, expect} from "@jest/globals";
 import {app} from '../app'
 
 const request = require('supertest');
-
+const testApp = request(app);
 /**
  * channel 接口测试
  */
 describe("api channel", () => {
-    let testApp: any;
-    beforeAll(() => {
-        testApp = request(app);
-        // console.log(testApp)
-    })
     test("get all channel", (done) => {
         testApp
             .get("")
@@ -76,10 +71,8 @@ describe("api channel", () => {
  * message 接口测试
  */
 describe("api message", () => {
-    let testApp: any;
     let ChannelValidate: any;
     beforeAll(async () => {
-        testApp = request(app);
         const name = "lee" + new Date().toDateString();
         // console.log(testApp)
         await testApp

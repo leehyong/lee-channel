@@ -5,8 +5,8 @@
   "main": "app.js",
   "scripts": {
     "tsc": "tsc",
-    "start": "node dist/app.js",
-    "dev": "nodemon src/app.ts",
+    "start": "node dist/index.js",
+    "dev": "nodemon src/index.ts",
     "build": "tsc -p tsconfig.json",
     "test": "jest --force-exit",
     "test-c": "jest --coverage --force-exit"
