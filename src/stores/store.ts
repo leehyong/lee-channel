@@ -1,16 +1,16 @@
-import {IBaseModel, IChannelModel, IMessageModel} from "../model";
+import {IBaseModel, IChannelValidate, IMessageValidate} from "../model";
 import {NormalMessageStore} from "./message";
 
 
-type SortFn = (a: IMessageModel, b: IMessageModel) => number
+type SortFn = (a: IMessageValidate, b: IMessageValidate) => number
 
 /**
  * 消息相关操作
  */
 interface IMessageOp {
-    list(channel_id: string,): IMessageModel[]
+    list(channel_id: string,): IMessageValidate[]
 
-    add(model: IMessageModel): boolean
+    add(model: IMessageValidate): boolean
 
     remove(channel_id: string, msg_id: string): boolean
 
@@ -31,26 +31,26 @@ interface Page<T> {
  * 分页
  */
 interface IPageMessageOp extends IMessageOp {
-    page(channel_id: string, page: number, page_size?: number): Page<IMessageModel>
+    page(channel_id: string, page: number, page_size?: number): Page<IMessageValidate>
 }
 
 /**
  * channel相关操作
  */
 interface IChannelOp {
-    list(): IChannelModel[]
+    list(): IChannelValidate[]
 
-    get(channel_id: string): IChannelModel | undefined
+    get(channel_id: string): IChannelValidate | undefined
 
 
-    add(model: IChannelModel): boolean
+    add(model: IChannelValidate): boolean
 }
 
 
 class ChannelManage implements IChannelOp {
     // 单例模式
     public static instance: ChannelManage = new ChannelManage();
-    public channels: Map<string, IChannelModel>;
+    public channels: Map<string, IChannelValidate>;
     // channel 名字对应的 id
     public channel_names:Map<string, string>;
 
@@ -65,7 +65,7 @@ class ChannelManage implements IChannelOp {
      * @param model
      * @return 如果 channel 对应的name不存在， 则新增，返回true； 否则，返回false
      */
-    add(model: IChannelModel): boolean {
+    add(model: IChannelValidate): boolean {
         if (this.channel_names.get(model.name as string) === undefined) {
             this.channels.set(model.id as string, model);
             this.channel_names.set(model.name as string, model.id);
@@ -74,7 +74,7 @@ class ChannelManage implements IChannelOp {
         return false
     }
 
-    list(): IChannelModel[] {
+    list(): IChannelValidate[] {
         return Array.from(this.channels.values());
     }
 
@@ -100,7 +100,7 @@ class ChannelMessageManage implements IMessageOp {
         this.msg_limit = 0;
     }
 
-    add(model: IMessageModel): boolean {
+    add(model: IMessageValidate): boolean {
         let msg_store = this.channel_msg[model.channel as string];
         if (msg_store === undefined) {
             msg_store = new NormalMessageStore(model.channel);
@@ -115,7 +115,7 @@ class ChannelMessageManage implements IMessageOp {
     }
 
 
-    list(channel_id: string): IMessageModel[] {
+    list(channel_id: string): IMessageValidate[] {
         const msg_store = this.channel_msg[channel_id];
         if (msg_store === undefined) return []
         if (this.is_resort) {
@@ -133,7 +133,7 @@ class ChannelMessageManage implements IMessageOp {
         return msg_store.remove(msg_id);
     }
 
-    sort(a: IMessageModel, b: IMessageModel): number {
+    sort(a: IMessageValidate, b: IMessageValidate): number {
         if (a.createdAt < b.createdAt) return 1;
         else if (a.createdAt === b.createdAt) return 0
         else return -1;
@@ -150,7 +150,7 @@ class PageChannelMessageManage extends ChannelMessageManage implements IPageMess
         super();
     }
 
-    page(channel_id: string, page: number, page_size?: number): Page<IMessageModel> {
+    page(channel_id: string, page: number, page_size?: number): Page<IMessageValidate> {
         let msg_store = this.channel_msg[channel_id];
         page_size = page_size || 10;
         const start = (page - 1) * page_size
@@ -161,7 +161,7 @@ class PageChannelMessageManage extends ChannelMessageManage implements IPageMess
                 total: 0,
                 page,
                 data: null
-            } as Page<IMessageModel>;
+            } as Page<IMessageValidate>;
         }
         if (this.is_resort) {
             // 排序
@@ -173,7 +173,7 @@ class PageChannelMessageManage extends ChannelMessageManage implements IPageMess
             page,
             total: msg_store.msgs.length,
             data: msg_store.msgs.slice(start, end)
-        } as Page<IMessageModel>;
+        } as Page<IMessageValidate>;
     }
 }
 

@@ -4,7 +4,7 @@ import {store} from "../stores/store";
 import {describe, test, expect} from "@jest/globals";
 import {get_model_id_str} from "../util";
 import {ID_CHANNEL_TYPE, ID_MESSAGE_TYPE} from "../consts";
-import {IChannelModel, IMessageModel} from "../model";
+import {IChannelValidate, IMessageValidate} from "../model";
 
 describe("channel", () => {
     test("channel", () => {
@@ -15,7 +15,7 @@ describe("channel", () => {
             const channel_id = get_model_id_str(ID_CHANNEL_TYPE);
             let result = channel.get(channel_id);
             expect(result).toBe(undefined);
-            const model: IChannelModel = {
+            const model: IChannelValidate = {
                 id: channel_id,
                 name
             }
@@ -35,10 +35,10 @@ describe("channel", () => {
 
 
 describe("channel message", () => {
-    let channel: IChannelModel;
+    let channel: IChannelValidate;
     beforeAll(() => {
         const channel_id = get_model_id_str(ID_CHANNEL_TYPE);
-        const model: IChannelModel = {
+        const model: IChannelValidate = {
             id: channel_id,
             name: "lee-test-"+ new Date().toDateString(),
         }
@@ -53,7 +53,7 @@ describe("channel message", () => {
         let remove_id:string;
         for (let title of titles){
             const id = get_model_id_str(ID_MESSAGE_TYPE)
-            const model:IMessageModel = {
+            const model:IMessageValidate = {
                 id,
                 title,
                 content: `${title}   sdada content`,

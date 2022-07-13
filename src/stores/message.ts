@@ -1,4 +1,4 @@
-import {IMessageModel} from "../model";
+import {IMessageValidate} from "../model";
 
 enum EmitStrategy {
     None,
@@ -8,7 +8,7 @@ enum EmitStrategy {
 
 export abstract class BaseMessageStore {
     // 外部只读
-    public msgs: IMessageModel[];
+    public msgs: IMessageValidate[];
     public channel_id: any;
     protected limit: number
 
@@ -18,7 +18,7 @@ export abstract class BaseMessageStore {
         this.channel_id = channel_id
     }
 
-    public abstract add(model: IMessageModel): boolean;
+    public abstract add(model: IMessageValidate): boolean;
 
     public abstract remove(model_id: string): boolean;
 }
@@ -28,7 +28,7 @@ export class NormalMessageStore extends BaseMessageStore {
         super(channel_id);
     }
 
-    add(model: IMessageModel): boolean {
+    add(model: IMessageValidate): boolean {
         if (model.channel !== this.channel_id) return false;
         this.msgs.push(model);
         return true;
@@ -56,7 +56,7 @@ export class RandomMessageStore extends NormalMessageStore {
         this.limit = limit < 1 ? 1 : limit;
     }
 
-    add(model: IMessageModel): boolean {
+    add(model: IMessageValidate): boolean {
         if (this.msgs.length >= this.limit) {
             this.selected_remove();
         }

@@ -2,7 +2,7 @@ import express, {Application, Request, Response, NextFunction} from 'express'
 import {ID_CHANNEL_TYPE, ID_MESSAGE_TYPE} from "../consts";
 import {store} from "../stores/store";
 import {get_model_id_str, ResultUtil} from "../util";
-import {ChannelModel, IChannelModel, IMessageModel, MessageModel} from "../model";
+import {ChannelValidate, IChannelValidate, IMessageValidate, MessageValidate} from "../model";
 
 const message = express.Router()
 
@@ -35,7 +35,7 @@ message.post(
     common,
     (req, res, next) => {
         const id = get_model_id_str(ID_MESSAGE_TYPE);
-        const msgValidateModel = new MessageModel(id);
+        const msgValidateModel = new MessageValidate(id);
         msgValidateModel.setAllAttrs(req.body);
         msgValidateModel.setAttr("channel", req.params.channel);
         msgValidateModel.setAttr("createdAt", new Date().getTime());
@@ -44,7 +44,7 @@ message.post(
             res.status(400).json(ResultUtil.Error(1, vr.msg))
             return;
         }
-        const result = store.message.add(msgValidateModel.validated_data as IMessageModel);
+        const result = store.message.add(msgValidateModel.validated_data as IMessageValidate);
         if (!result) {
             res.status(400).json(ResultUtil.Error(1, "发送消息失败"))
             return;

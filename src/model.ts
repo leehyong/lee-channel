@@ -6,12 +6,12 @@ export interface IBaseModel {
     id: any
 }
 
-export interface IChannelModel extends IBaseModel {
+export interface IChannelValidate extends IBaseModel {
     name: any,
     // createdAt: any
 }
 
-export interface IMessageModel extends IBaseModel {
+export interface IMessageValidate extends IBaseModel {
     title: any,
     content: any,
     channel: any,
@@ -36,7 +36,7 @@ function is_field_cls<T>(clz: { new(): T, [key: string]: any }): boolean {
  * 自动生成某个model的所有字段
  * @param clz 待生成字段的类
  */
-export function generate_fields<T extends BaseModel,
+export function generate_fields<T extends BaseValidate,
     F extends BaseField<any>>(
     clz: {
         new(): T, // 保证可以 使用 new 进行初始化
@@ -54,7 +54,10 @@ export function generate_fields<T extends BaseModel,
     return fields
 }
 
-export abstract class BaseModel implements IValidate {
+/**
+ * 只要
+ */
+export abstract class BaseValidate implements IValidate {
     public is_validated: boolean;
     public validated_data: { [key: string]: any }
     protected fields: { [key: string]: any }
@@ -160,7 +163,7 @@ export abstract class BaseModel implements IValidate {
  * Channel model
  */
 
-export class ChannelModel extends BaseModel {
+export class ChannelValidate extends BaseValidate {
     private static _name = StringField(
         {
             is_not_blank: true,
@@ -169,19 +172,19 @@ export class ChannelModel extends BaseModel {
             max: 30
         }
     )
-    override model_clz = ChannelModel;
+    override model_clz = ChannelValidate;
 
     constructor(_id: any) {
         super(_id);
-        // this.fields = {...this.fields, ...generate_fields(ChannelModel as any)}
+        // this.fields = {...this.fields, ...generate_fields(ChannelValidate as any)}
     }
 }
 
 /**
  * Message model
  */
-export class MessageModel extends BaseModel {
-    override model_clz = MessageModel;
+export class MessageValidate extends BaseValidate {
+    override model_clz = MessageValidate;
     private static _channel = StringField({
         min: 1, required: true, is_not_empty: true, default_value: "1"
     })

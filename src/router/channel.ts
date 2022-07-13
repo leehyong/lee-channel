@@ -2,7 +2,7 @@ import express, {Application, Response, NextFunction} from 'express'
 import {ID_CHANNEL_TYPE} from "../consts";
 import {store} from "../stores/store";
 import {get_model_id_str, ResultUtil} from "../util";
-import {ChannelModel, IChannelModel} from "../model";
+import {ChannelValidate, IChannelValidate} from "../model";
 
 const channel = express.Router()
 
@@ -31,7 +31,7 @@ channel.get('/:id', (req, res, next) => {
 // 创建一个channel
 channel.post("", (req, res, next) => {
     const id = get_model_id_str(ID_CHANNEL_TYPE);
-    const channelValidateModel = new ChannelModel(id);
+    const channelValidateModel = new ChannelValidate(id);
     // console.log(req.body)
     channelValidateModel.setAllAttrs(req.body)
     const vr = channelValidateModel.validate();
@@ -39,7 +39,7 @@ channel.post("", (req, res, next) => {
         res.status(400).json(ResultUtil.Error(1, vr.msg))
         return;
     }
-    const result = store.channel.add(channelValidateModel.validated_data as IChannelModel);
+    const result = store.channel.add(channelValidateModel.validated_data as IChannelValidate);
     if (!result) {
         res.status(400).json(ResultUtil.Error(1, `已有名为${channelValidateModel.validated_data.name}的channel，请检查`))
         return;

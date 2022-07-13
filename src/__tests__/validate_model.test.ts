@@ -1,23 +1,23 @@
 import {describe, test, expect} from "@jest/globals";
 
-import {ChannelModel, MessageModel, BaseModel, generate_fields} from "../model";
+import {ChannelValidate, MessageValidate, BaseValidate, generate_fields} from "../model";
 import {StringField} from "../field";
 
-export class TestMessageModel extends MessageModel {
-    override model_clz = TestMessageModel;
+export class TestMessageValidate extends MessageValidate {
+    override model_clz = TestMessageValidate;
     private static _test = StringField({required: false, min: 3, error_message:(val) => `${val}的长度不能低于3`})
 
     constructor(_id: any) {
         super(_id);
-        // this.fields = {...this.fields, ...generate_fields(TestMessageModel as any)}
-        // this.test = BaseModel.generate_field(TestMessageModel.testCls);
+        // this.fields = {...this.fields, ...generate_fields(TestMessageValidate as any)}
+        // this.test = BaseValidate.generate_field(TestMessageValidate.testCls);
     }
 }
 
-describe("validate ChannelModel", () => {
-    test("ChannelModel 1", () => {
+describe("validate ChannelValidate", () => {
+    test("ChannelValidate 1", () => {
         const name = "leehuayong";
-        let model = new ChannelModel(1).setAttr('name', name);
+        let model = new ChannelValidate(1).setAttr('name', name);
         expect(model.is_validated).toBe(false);
         let result = model.validate();
         expect(model.is_validated).toBe(true);
@@ -28,9 +28,9 @@ describe("validate ChannelModel", () => {
         expect(model.validated_data.id).toBe(1);
     });
 
-    test("ChannelModel 2", () => {
+    test("ChannelValidate 2", () => {
         const name = "  ";
-        let model = new ChannelModel(1)
+        let model = new ChannelValidate(1)
             .setAttr('name', name);
         expect(model.is_validated).toBe(false);
         let result = model.validate();
@@ -41,9 +41,9 @@ describe("validate ChannelModel", () => {
         expect(model.validated_data.name).toBe(undefined);
         expect(model.validated_data.id).toBe(1);
     });
-    test("ChannelModel 3", () => {
+    test("ChannelValidate 3", () => {
         const name = undefined;
-        let model = new ChannelModel(1)
+        let model = new ChannelValidate(1)
             .setAttr('name', name);
         expect(model.is_validated).toBe(false);
         let result = model.validate();
@@ -55,8 +55,8 @@ describe("validate ChannelModel", () => {
         expect(model.validated_data.id).toBe(1);
 
     });
-    test("ChannelModel 3", () => {
-        let model = new ChannelModel(1)
+    test("ChannelValidate 3", () => {
+        let model = new ChannelValidate(1)
             .setAttr('name', null);
         expect(model.is_validated).toBe(false);
         let result = model.validate();
@@ -71,10 +71,10 @@ describe("validate ChannelModel", () => {
 })
 
 
-describe("validate MessageModel", () => {
-    test("MessageModel 1", () => {
+describe("validate MessageValidate", () => {
+    test("MessageValidate 1", () => {
         const dt = new Date().getTime();
-        const model = new MessageModel(1)
+        const model = new MessageValidate(1)
             .setAttr('channel', "1")
             .setAttr('title', "嘿嘿")
             .setAttr('content', "dadad").setAttr('createdAt', dt);
@@ -89,9 +89,9 @@ describe("validate MessageModel", () => {
         expect(model.validated_data.content).toBe("dadad");
         expect(model.validated_data.createdAt).toBe(dt);
     });
-    test("MessageModel 2", () => {
+    test("MessageValidate 2", () => {
         const dt = new Date().getTime();
-        const model = new MessageModel(1)
+        const model = new MessageValidate(1)
             .setAttr('channel', "12")
             .setAttr('title', "嘿嘿")
             .setAttr('createdAt', dt);
@@ -108,9 +108,9 @@ describe("validate MessageModel", () => {
         expect(model.validated_data.createdAt).toBe(dt);
     });
 
-    test("MessageModel 3", () => {
+    test("MessageValidate 3", () => {
         const dt = new Date().getTime();
-        const model = new MessageModel(1)
+        const model = new MessageValidate(1)
             .setAttr('channel', "113")
             // .setAttr('title', "嘿嘿")
             .setAttr('createdAt', dt);
@@ -127,9 +127,9 @@ describe("validate MessageModel", () => {
         expect(model.validated_data.createdAt).toBe(dt);
     });
 
-    test("MessageModel 4", () => {
+    test("MessageValidate 4", () => {
         const dt = new Date().getTime();
-        const model = new MessageModel(1)
+        const model = new MessageValidate(1)
             .setAttr('channel', "113")
             // .setAttr('title', "嘿嘿")
             .setAttr('createdAt', dt);
@@ -149,10 +149,10 @@ describe("validate MessageModel", () => {
 
 
 
-describe("validate TestMessageModel", () => {
-    test("TestMessageModel 1", () => {
+describe("validate TestMessageValidate", () => {
+    test("TestMessageValidate 1", () => {
         const dt = new Date().getTime();
-        const model = new TestMessageModel(1)
+        const model = new TestMessageValidate(1)
             .setAttr('channel', "1")
             .setAttr('title', "嘿嘿")
             .setAttr('content', "dadad")
@@ -170,9 +170,9 @@ describe("validate TestMessageModel", () => {
         expect(model.validated_data.createdAt).toBe(dt);
     });
 
-    test("MessageModel 2", () => {
+    test("MessageValidate 2", () => {
         const dt = new Date().getTime();
-        const model = new TestMessageModel(1)
+        const model = new TestMessageValidate(1)
             .setAttr('channel', "1")
             .setAttr('title', "嘿嘿")
             .setAttr('content', "dadad")

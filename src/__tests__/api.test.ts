@@ -77,7 +77,7 @@ describe("api channel", () => {
  */
 describe("api message", () => {
     let testApp: any;
-    let channelModel: any;
+    let ChannelValidate: any;
     beforeAll(async () => {
         testApp = request(app);
         const name = "lee" + new Date().toDateString();
@@ -89,12 +89,12 @@ describe("api message", () => {
         const result = await testApp
             .get("/channel")
             .set('Accept', 'application/json');
-        channelModel = result.body.data[0];
-        // console.log(channelModel)
+        ChannelValidate = result.body.data[0];
+        // console.log(ChannelValidate)
     });
 
     test("get channel message success", async () => {
-        let resp = await testApp.get(`/message/${channelModel.id}/1`)
+        let resp = await testApp.get(`/message/${ChannelValidate.id}/1`)
             .set('Accept', 'application/json');
         expect(resp.status).toBe(200);
         expect(resp.body.success).toBe(true);
@@ -113,17 +113,17 @@ describe("api message", () => {
         for (let title of titles) {
             let model = {
                 title,
-                channel: channelModel.id,
+                channel: ChannelValidate.id,
                 content: `lee content ${title}`,
             }
-            resp = await testApp.post(`/message/${channelModel.id}`)
+            resp = await testApp.post(`/message/${ChannelValidate.id}`)
                 .send(model)
                 .set('Accept', 'application/json');
             expect(resp.status).toBe(201);
             models.set(model.title, model)
         }
         resp = await testApp
-            .get(`/message/${channelModel.id}/1`)
+            .get(`/message/${ChannelValidate.id}/1`)
             .set('Accept', 'application/json');
         const msgs = resp.body.data.data;
         expect(msgs.length).toBeGreaterThanOrEqual(3)
@@ -139,7 +139,7 @@ describe("api message", () => {
 
     test("test create message error", async () => {
         let resp = await testApp
-            .get(`/message/${channelModel.id}1/1`)
+            .get(`/message/${ChannelValidate.id}1/1`)
             .set('Accept', 'application/json');
         expect(resp.status).toBe(400);
         expect(resp.body.message).toBe("channel不存在，请检查");
@@ -147,7 +147,7 @@ describe("api message", () => {
             content: "a",
         }
         resp = await testApp
-            .post(`/message/${channelModel.id}`)
+            .post(`/message/${ChannelValidate.id}`)
             .send(model)
             .set('Accept', 'application/json');
         expect(resp.status).toBe(400);
