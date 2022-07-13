@@ -4,11 +4,12 @@ import {ChannelModel, MessageModel, BaseModel, generate_fields} from "../model";
 import {StringField} from "../field";
 
 export class TestMessageModel extends MessageModel {
+    override model_clz = TestMessageModel;
     private static _test = StringField({required: false, min: 3, error_message:(val) => `${val}的长度不能低于3`})
 
     constructor(_id: any) {
         super(_id);
-        this.fields = {...this.fields, ...generate_fields(TestMessageModel as any)}
+        // this.fields = {...this.fields, ...generate_fields(TestMessageModel as any)}
         // this.test = BaseModel.generate_field(TestMessageModel.testCls);
     }
 }

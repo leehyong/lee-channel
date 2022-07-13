@@ -1,5 +1,6 @@
 import {BaseField, NumberField, IField, StringField} from "./field";
 import {IValidate, IValidateResult} from "./validate";
+import any = jasmine.any;
 
 export interface IBaseModel {
     id: any
@@ -24,14 +25,16 @@ export interface IMessageModel extends IBaseModel {
  */
 function is_field_cls<T>(clz: { new(): T, [key: string]: any }): boolean {
     let ty = clz.__proto__;
-    while (ty && ty !== BaseField){ ty = ty.__proto__;}
+    while (ty && ty !== BaseField) {
+        ty = ty.__proto__;
+    }
     return clz.__proto__ === BaseField;
 }
 
 /**
  * 面向元编程
  * 自动生成某个model的所有字段
- * @param clz
+ * @param clz 待生成字段的类
  */
 export function generate_fields<T extends BaseModel,
     F extends BaseField<any>>(
@@ -55,10 +58,13 @@ export abstract class BaseModel implements IValidate {
     public is_validated: boolean;
     public validated_data: { [key: string]: any }
     protected fields: { [key: string]: any }
+    protected model_clz: any | null = null;
+    private is_generated_fields:boolean;
 
     protected constructor(_id: any) {
         this.is_validated = false;
         this.validated_data = {};
+        this.is_generated_fields = false; 
         this.fields = {id: _id};
     }
 
@@ -110,12 +116,26 @@ export abstract class BaseModel implements IValidate {
     }
 
     /**
+     * 自动生产全部字段
+     * @private
+     */
+    private auto_generate_all_fields(){
+        // 每个实例对象都会重新去生成这些字段， 在数据很多的时候，会有效率问题
+        // 如果考虑使用内存缓存的方式，可以提高效率，但是可能有缓存不一致的问题。
+        this.fields = {...this.fields, ...generate_fields(this.model_clz as any)}
+        this.is_generated_fields = true;
+    }
+    
+    /**
      * 设置 prop 对应字段的值
      * builder 模式， 支持链式调用
      * @param prop
      * @param val
      */
     public setAttr(prop: string, val?: any | null) {
+        if (!this.is_generated_fields){
+            this.auto_generate_all_fields();
+        }
         if (this.fields[prop] instanceof BaseField) {
             (this.fields[prop] as any).setValue(val)
         } else {
@@ -124,6 +144,10 @@ export abstract class BaseModel implements IValidate {
         return this
     }
 
+    /**
+     * 一次性设置全部 field 属性
+     * @param options
+     */
     public setAllAttrs(options: { [key: string]: any }) {
         for (let attr in options) {
             this.setAttr(attr, options[attr])
@@ -145,10 +169,11 @@ export class ChannelModel extends BaseModel {
             max: 30
         }
     )
+    override model_clz = ChannelModel;
 
     constructor(_id: any) {
         super(_id);
-        this.fields = {...this.fields, ...generate_fields(ChannelModel as any)}
+        // this.fields = {...this.fields, ...generate_fields(ChannelModel as any)}
     }
 }
 
@@ -156,6 +181,7 @@ export class ChannelModel extends BaseModel {
  * Message model
  */
 export class MessageModel extends BaseModel {
+    override model_clz = MessageModel;
     private static _channel = StringField({
         min: 1, required: true, is_not_empty: true, default_value: "1"
     })
@@ -170,7 +196,6 @@ export class MessageModel extends BaseModel {
 
     constructor(_id: any) {
         super(_id);
-        this.fields = {...this.fields, ...generate_fields(MessageModel as any)}
     }
 }
 
